@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>llama 控制台</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div id="login-layer" hidden>
+    <h2>需要令牌</h2>
+    <p>本面板已开启令牌保护，请输入访问令牌。</p>
+    <input type="password" id="login-token" placeholder="输入令牌" autocomplete="off">
+    <button id="btn-login">登录</button>
+    <div id="login-msg" class="dim"></div>
+  </div>
+
+  <div id="error-bar" class="error-bar hidden"></div>
+
+  <header>
+    <h1>llama 控制台</h1>
+    <div class="header-right">
+      <span id="current-model">—</span>
+      <span id="mode-badge">—</span>
+      <span id="last-update">—</span>
+    </div>
+  </header>
+
+  <nav id="tabs">
+    <button id="btn-tab-dash" class="tab active">仪表盘</button>
+    <button id="btn-tab-models" class="tab">模型调试</button>
+    <button id="btn-tab-load" class="tab">加载与对话</button>
+    <button id="btn-tab-hub" class="tab">模型仓库</button>
+    <button id="btn-tab-oc" class="tab">OpenClaw</button>
+    <button id="btn-tab-settings" class="tab">设置</button>
+  </nav>
+
+  <!-- ==================== 仪表盘（只读） ==================== -->
+  <section id="panel-dash" class="hidden">
+    <h2>CPU</h2>
+    <div class="bar"><div id="dash-cpu-bar" class="bar-fill"></div></div>
+    <div id="dash-cpu-text" class="bar-text">—</div>
+    <div id="dash-cpu-cores" class="cores"></div>
+    <div id="dash-load" class="dim">—</div>
+
+    <h2>内存</h2>
+    <div class="bar"><div id="dash-mem-bar" class="bar-fill"></div></div>
+    <div id="dash-mem-text" class="bar-text">—</div>
+    <div id="dash-swap-text" class="dim">—</div>
+
+    <h2>GPU</h2>
+    <div id="dash-gpu-name" class="dim">—</div>
+    <div class="bar"><div id="dash-gpu-bar" class="bar-fill"></div></div>
+    <div id="dash-gpu-text" class="bar-text">—</div>
+    <div class="dim">
+      <span id="dash-gpu-util">—</span> · <span id="dash-gpu-temp">—</span>
+    </div>
+    <div id="dash-gpu-procs" class="dim"></div>
+    <div style="display:none">
+    </div>
+
+    <h2>模型状态</h2>
+    <div class="dim">点任意卡片进入该模型的调试页</div>
+    <div id="dash-units"></div>
+  </section>
+
+  <!-- ==================== 模型调试 ==================== -->
+  <section id="panel-models" class="hidden">
+    <div class="row">
+      <label>模型 <select id="model-select"></select></label>
+      <span id="model-state" class="dim">—</span>
+    </div>
+    <div class="unit-actions">
+      <button id="btn-model-start" class="btn btn-primary">启动</button>
+      <button id="btn-model-stop" class="btn btn-danger">停止</button>
+      <button id="btn-model-restart" class="btn btn-warning">重启</button>
+      <button id="btn-params-save" class="btn btn-success">保存并重启</button>
+      <button id="btn-params-reset" class="btn btn-secondary">还原默认</button>
+    </div>
+    <div id="model-params">载入中…</div>
+    <div id="model-msg" class="dim"></div>
+
+    <h2>对话测试</h2>
+    <div class="chat-wrap">
+      <div class="chat-toolbar">
+        <label>目标 <select id="chat-models-port"></select></label>
+        <span id="chat-models-stat" class="dim">—</span>
+        <button id="btn-chat-models-clear" class="btn btn-sm">清空</button>
+      </div>
+      <div id="chat-models-log" class="chat-log"></div>
+      <div class="chat-input-row">
+        <textarea id="chat-models-input" rows="2" placeholder="输入一句话，回车发送（Shift+回车换行）"></textarea>
+        <button id="btn-chat-models-send" class="btn btn-primary">发送</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 加载与对话 ==================== -->
+  <section id="panel-load" class="hidden">
+    <h2>自定义加载</h2>
+    <div class="row">
+      <label>模型文件 <select id="custom-model"></select></label>
+      <label>端口 <input id="custom-port" type="number" value="1240"></label>
+    </div>
+    <div id="custom-params"></div>
+    <button id="btn-custom-load" class="btn btn-primary">加载</button>
+    <button id="btn-custom-stop" class="btn btn-danger">停止</button>
+    <div id="custom-status" class="dim">—</div>
+
+    <h2>对话测试</h2>
+    <div class="chat-wrap">
+      <div class="chat-toolbar">
+        <label>目标 <select id="chat-load-port"></select></label>
+        <span id="chat-load-stat" class="dim">—</span>
+        <button id="btn-chat-load-clear" class="btn btn-sm">清空</button>
+      </div>
+      <div id="chat-load-log" class="chat-log"></div>
+      <div class="chat-input-row">
+        <textarea id="chat-load-input" rows="2" placeholder="输入一句话，回车发送（Shift+回车换行）"></textarea>
+        <button id="btn-chat-load-send" class="btn btn-primary">发送</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 模型仓库（抱脸虫） ==================== -->
+  <section id="panel-hub" class="hidden">
+    <h2>抱脸虫模型仓库</h2>
+    <div class="row">
+      <input id="hf-query" placeholder="搜索 GGUF 模型，例如 qwen3 30b gguf / gemma gguf">
+      <button id="btn-hf-search" class="btn btn-primary">搜索</button>
+    </div>
+    <div class="dim">只检索 GGUF 格式（llama.cpp 能直接跑）· 下载目录 /home/user/models</div>
+    <div id="hf-msg" class="dim">—</div>
+    <div id="hf-results"></div>
+    <div id="hf-files"></div>
+
+    <h2>下载</h2>
+    <div class="row">
+      <label><input id="hf-autoreg" type="checkbox" checked> 下载完自动登记为模型（进互斥 + 仪表盘 + 调试页）</label>
+    </div>
+    <div class="row">
+      <label>登记类型 <select id="hf-kind"></select></label>
+      <label>登记端口 <input id="hf-port" type="number" placeholder="留空自动分配"></label>
+    </div>
+    <div id="hf-progress"></div>
+    <h2>添加模型</h2>
+    <div class="form-grid">
+      <label>模型标识 <input id="add-name" placeholder="如 my-qwen3（自动加 llama- 前缀）"></label>
+      <label>显示名 <input id="add-label" placeholder="留空则用文件名"></label>
+      <label>模型文件 <select id="add-file"></select></label>
+      <label>类型 <select id="add-kind"></select></label>
+      <label>端口 <input id="add-port" type="number"></label>
+    </div>
+    <button id="btn-add-model" class="btn btn-primary">添加模型</button>
+    <div id="add-msg" class="dim">—</div>
+    <div class="dim">
+      添加后会自动生成 systemd unit、写入互斥（Conflicts=）、并出现在仪表盘与调试页。<br>
+      类型：moe = 混合专家（可用「CPU 专家层」省显存）· dense = 稠密 · embed = 嵌入向量（可与对话模型共存，不参与互斥）
+    </div>
+
+    <h2>已登记模型</h2>
+    <div id="model-list">载入中…</div>
+
+  </section>
+
+  <!-- ==================== OpenClaw ==================== -->
+  <section id="panel-oc" class="hidden">
+    <h2>实时状态 <span id="oc-checked" class="dim"></span></h2>
+    <div id="oc-info" class="info-grid">载入中…</div>
+    <span id="oc-mode" hidden></span><span id="oc-primary" hidden></span><span id="oc-gateway" hidden></span>
+    <div class="dim">本页每 2 秒自动刷新；数据由 user 上的 <code>openclaw-status.sh</code> 提供。</div>
+    <h2>操作</h2>
+    <div class="unit-actions">
+      <button id="btn-cloud" class="btn btn-primary">切换到云端</button>
+      <button id="btn-local" class="btn btn-secondary">切换到本地</button>
+      <button id="btn-gw-restart" class="btn btn-warning">重启网关</button>
+      <button id="btn-gw-force" class="btn btn-danger">强制重启</button>
+    </div>
+    <div id="oc-msg" class="dim"></div>
+    <div class="dim">重启网关会断开当前会话，请先确认。</div>
+  </section>
+
+  <!-- ==================== 设置 ==================== -->
+  <section id="panel-settings" class="hidden">
+    <h2>本服务</h2>
+    <div class="setting-row">
+      <label>监听端口 <input id="panel-port" type="number" min="1024" max="65535" placeholder="8077"></label>
+      <span class="dim">面板自己监听的端口；改完需重启面板服务生效</span>
+    </div>
+    <button id="btn-port-save" class="btn btn-secondary">保存端口</button>
+    <button id="btn-panel-restart" class="btn btn-warning">重启面板服务</button>
+    <div id="port-msg" class="dim">—</div>
+    <div class="setting-row">
+      <label>
+        <input id="autostart-toggle" type="checkbox">
+        <span id="autostart-label">开机自启</span>
+      </label>
+      <span class="dim">开机后自动拉起本面板（不开则需手动 systemctl start）</span>
+    </div>
+    <div class="setting-row">
+      <label>
+        <input id="auth-toggle" type="checkbox">
+        <span id="auth-label">令牌保护</span>
+      </label>
+      <span class="dim">默认关闭：局域网内打开本页即可操作</span>
+    </div>
+    <div id="auth-msg" class="dim"></div>
+
+    <h2>OpenClaw 连接</h2>
+    <div class="dim">
+      面板通过 SSH 控制 user 上的 OpenClaw。改了地址/用户/密钥后在这里修正，无需重新编译。
+    </div>
+    <div class="form-grid">
+      <label>主机地址 <input id="ssh-host" placeholder="192.0.2.20"></label>
+      <label>用户名 <input id="ssh-user" placeholder="user"></label>
+      <label>端口 <input id="ssh-port" type="number" placeholder="22"></label>
+      <label>脚本目录 <input id="ssh-scripts" placeholder="/home/user/bin"></label>
+      <label>密钥路径 <input id="ssh-keypath" placeholder="/root/.ssh/id_ed25519_panel"></label>
+    </div>
+    <button id="btn-ssh-save" class="btn btn-primary">保存连接设置</button>
+    <button id="btn-ssh-test" class="btn btn-secondary">测试连接</button>
+    <div id="ssh-msg" class="dim">—</div>
+
+    <h3>私钥（可选，加密保存）</h3>
+    <div id="ssh-key-state" class="dim">—</div>
+    <textarea id="ssh-key" rows="4" placeholder="粘贴私钥内容（如 -----BEGIN OPENSSH PRIVATE KEY-----）；保存后界面不会回显"></textarea>
+    <button id="btn-ssh-secret" class="btn btn-primary">加密保存私钥</button>
+    <button id="btn-ssh-secret-clear" class="btn btn-danger">清除已存私钥</button>
+    <div class="dim">
+      加密：<b>AES-256-GCM</b>，主密钥 <code>/opt/llama-panel/master.key</code>（32 字节随机 · 0600 · 仅 root 可读）。
+      保存后优先于上面的「密钥路径」。
+    </div>
+
+    <h3>运行身份</h3>
+    <div id="mode-state" class="dim">—</div>
+    <div class="unit-actions">
+      <button id="btn-mode-root" class="btn btn-secondary">以 root 运行</button>
+      <button id="btn-mode-user" class="btn btn-warning">以非特权用户运行</button>
+    </div>
+    <div id="mode-msg" class="dim">—</div>
+    <div class="dim">
+      非 root 模式会创建专用用户 <code>llama-panel</code>、把状态移到 <code>/var/lib/llama-panel</code>、
+      并把 <code>/opt/llama-panel</code> 收紧为 root 所有（堵掉「替换二进制」这条本地提权路径）。
+      只有 5 类写操作经 <code>helper</code> 提权。切换后面板会重启，<b>若起不来会自动回滚到 root</b>。
+    </div>
+
+    <h2>面板信息</h2>
+    <div id="panel-info" class="info-grid">载入中…</div>
+  </section>
+
+  <footer>llama-panel · 控制台前端由 GPU 机本地模型生成，后端为 Go 标准库单二进制</footer>
+</body>
+</html>

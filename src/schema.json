@@ -1,0 +1,1213 @@
+{
+  "groups": [
+    "基础",
+    "显存",
+    "性能",
+    "采样",
+    "思考控制",
+    "投机解码",
+    "其他"
+  ],
+  "order": [
+    "MODEL",
+    "PORT",
+    "ALIAS",
+    "NGL",
+    "NCPUMOE",
+    "CTX",
+    "MMPROJ",
+    "CTKV",
+    "CTVV",
+    "RERANKON",
+    "POOLING",
+    "LOADMODE",
+    "MLOCK",
+    "KVOFFLOAD",
+    "OPOFFLOAD",
+    "SPLITMODE",
+    "MAINGPU",
+    "TSPLIT",
+    "THREADS",
+    "TBATCH",
+    "BATCH",
+    "UBATCH",
+    "FLASH",
+    "PARALLEL",
+    "CONTBATCH",
+    "JINJA",
+    "WARMUP",
+    "METRICS",
+    "TEMP",
+    "TOPK",
+    "TOPP",
+    "MINP",
+    "REPEAT",
+    "PRESENCE",
+    "FREQUENCY",
+    "REPEATN",
+    "TOPNSIGMA",
+    "SAMPLERS",
+    "SEED",
+    "NPREDICT",
+    "REASONING",
+    "REASONINGBUDGET",
+    "REASONINGEFFORT",
+    "REASONINGFORMAT",
+    "SPECTYPE",
+    "SPECDRAFTMODEL",
+    "SPECDRAFTNGL",
+    "SPECNMAX",
+    "SPECNGRAMN",
+    "SPECPSPLIT",
+    "EXTRA"
+  ],
+  "kinds": {
+    "moe": [
+      "all",
+      "chat",
+      "moe"
+    ],
+    "dense": [
+      "all",
+      "chat"
+    ],
+    "custom": [
+      "all",
+      "chat",
+      "moe"
+    ],
+    "embed": [
+      "all"
+    ],
+    "rerank": [
+      "all",
+      "rerank"
+    ],
+    "vision": [
+      "all",
+      "chat",
+      "vision"
+    ]
+  },
+  "params": {
+    "MODEL": {
+      "label": "模型文件",
+      "group": "基础",
+      "type": "model",
+      "core": true,
+      "scope": "all",
+      "default": "",
+      "safe": "",
+      "options": [],
+      "note": "从 /home/user/models 选择 GGUF"
+    },
+    "PORT": {
+      "label": "端口",
+      "group": "基础",
+      "type": "int",
+      "core": true,
+      "scope": "all",
+      "min": 1024,
+      "max": 65535,
+      "default": "",
+      "safe": "",
+      "options": [
+        "1231",
+        "1232",
+        "1233",
+        "1234",
+        "1235",
+        "1236",
+        "1240"
+      ],
+      "note": "不得与其他服务冲突"
+    },
+    "ALIAS": {
+      "label": "对外别名",
+      "group": "基础",
+      "type": "str",
+      "core": true,
+      "scope": "all",
+      "default": "",
+      "safe": "",
+      "options": [],
+      "note": "客户端调用时用的模型名，一般不用改"
+    },
+    "NGL": {
+      "label": "GPU 层数",
+      "group": "显存",
+      "type": "int",
+      "core": true,
+      "scope": "all",
+      "min": 0,
+      "max": 999,
+      "default": "999",
+      "safe": "999",
+      "options": [
+        "0",
+        "16",
+        "32",
+        "48",
+        "64",
+        "999"
+      ],
+      "note": "999 = 全部卸载到 GPU；MoE 模型实际显存取决于『CPU 专家层』"
+    },
+    "NCPUMOE": {
+      "label": "CPU 专家层",
+      "group": "显存",
+      "type": "int",
+      "core": true,
+      "scope": "moe",
+      "min": 0,
+      "max": 128,
+      "default": "32",
+      "safe": "32",
+      "options": [
+        "4",
+        "8",
+        "16",
+        "24",
+        "32",
+        "48",
+        "64"
+      ],
+      "note": "只对 MoE 模型有效；实测 98k 上下文下低于 16 会 OOM"
+    },
+    "CTX": {
+      "label": "上下文长度",
+      "group": "显存",
+      "type": "int",
+      "core": true,
+      "scope": "all",
+      "min": 4096,
+      "max": 1048576,
+      "default": "98304",
+      "safe": "98304",
+      "options": [
+        "8192",
+        "16384",
+        "32768",
+        "65536",
+        "98304",
+        "131072"
+      ],
+      "note": "越大越吃显存；98304 实测占 12.0 GiB"
+    },
+    "CTKV": {
+      "label": "K 缓存量化",
+      "group": "显存",
+      "type": "enum",
+      "core": true,
+      "scope": "chat",
+      "default": "q8_0",
+      "safe": "q8_0",
+      "options": [
+        "f32",
+        "f16",
+        "bf16",
+        "q8_0",
+        "q4_0",
+        "q4_1",
+        "iq4_nl",
+        "q5_0",
+        "q5_1"
+      ],
+      "note": "实测 q8_0 比 q4_0 更省显存（CPU 专家层更少）"
+    },
+    "CTVV": {
+      "label": "V 缓存量化",
+      "group": "显存",
+      "type": "enum",
+      "core": true,
+      "scope": "chat",
+      "default": "q8_0",
+      "safe": "q8_0",
+      "options": [
+        "f32",
+        "f16",
+        "bf16",
+        "q8_0",
+        "q4_0",
+        "q4_1",
+        "iq4_nl",
+        "q5_0",
+        "q5_1"
+      ],
+      "note": "同 K 缓存"
+    },
+    "LOADMODE": {
+      "label": "加载模式",
+      "group": "显存",
+      "type": "enum",
+      "core": false,
+      "scope": "all",
+      "flag": "--load-mode",
+      "default": "none",
+      "safe": "none",
+      "options": [
+        "",
+        "auto",
+        "mmap",
+        "mlock",
+        "mmap+mlock",
+        "none"
+      ],
+      "note": "实测 none 冷启约 4 秒；空=llama.cpp 默认 auto"
+    },
+    "MLOCK": {
+      "label": "锁定内存",
+      "group": "显存",
+      "type": "bool",
+      "core": false,
+      "scope": "all",
+      "flag": "--mlock",
+      "off_flag": "",
+      "default": "",
+      "safe": "",
+      "options": [
+        "",
+        "on",
+        "off"
+      ],
+      "note": "阻止模型被换出到 swap"
+    },
+    "KVOFFLOAD": {
+      "label": "KV 卸载到 GPU",
+      "group": "显存",
+      "type": "bool",
+      "core": false,
+      "scope": "chat",
+      "flag": "--kv-offload",
+      "off_flag": "--no-kv-offload",
+      "default": "",
+      "safe": "",
+      "options": [
+        "",
+        "on",
+        "off"
+      ],
+      "note": "关闭可省显存、但变慢"
+    },
+    "OPOFFLOAD": {
+      "label": "算子卸载到 GPU",
+      "group": "显存",
+      "type": "bool",
+      "core": false,
+      "scope": "chat",
+      "flag": "--op-offload",
+      "off_flag": "--no-op-offload",
+      "default": "",
+      "safe": "",
+      "options": [
+        "",
+        "on",
+        "off"
+      ],
+      "note": "llama.cpp 默认开启"
+    },
+    "SPLITMODE": {
+      "label": "多卡切分方式",
+      "group": "显存",
+      "type": "enum",
+      "core": false,
+      "scope": "all",
+      "flag": "--split-mode",
+      "default": "",
+      "safe": "layer",
+      "options": [
+        "",
+        "none",
+        "layer",
+        "row",
+        "tensor"
+      ],
+      "note": "单卡可忽略"
+    },
+    "MAINGPU": {
+      "label": "主 GPU 序号",
+      "group": "显存",
+      "type": "int",
+      "core": false,
+      "scope": "all",
+      "flag": "--main-gpu",
+      "min": 0,
+      "max": 7,
+      "default": "",
+      "safe": "0",
+      "options": [
+        "",
+        "0",
+        "1"
+      ],
+      "note": "只有一张卡时保持默认"
+    },
+    "TSPLIT": {
+      "label": "多卡比例",
+      "group": "显存",
+      "type": "str",
+      "core": false,
+      "scope": "all",
+      "flag": "--tensor-split",
+      "default": "",
+      "safe": "",
+      "options": [],
+      "note": "逗号分隔，如 1,1；单卡保持默认"
+    },
+    "THREADS": {
+      "label": "生成线程数",
+      "group": "性能",
+      "type": "int",
+      "core": false,
+      "scope": "all",
+      "flag": "--threads",
+      "min": 1,
+      "max": 256,
+      "default": "",
+      "safe": "16",
+      "options": [
+        "",
+        "4",
+        "8",
+        "12",
+        "16",
+        "24",
+        "32"
+      ],
+      "note": "本机 16 核；空=-1 自动"
+    },
+    "TBATCH": {
+      "label": "批处理线程数",
+      "group": "性能",
+      "type": "int",
+      "core": false,
+      "scope": "all",
+      "flag": "--threads-batch",
+      "min": 1,
+      "max": 256,
+      "default": "",
+      "safe": "",
+      "options": [
+        "",
+        "8",
+        "16",
+        "24",
+        "32"
+      ],
+      "note": "影响提示词处理速度"
+    },
+    "BATCH": {
+      "label": "逻辑批大小",
+      "group": "性能",
+      "type": "int",
+      "core": false,
+      "scope": "all",
+      "flag": "--batch-size",
+      "min": 32,
+      "max": 8192,
+      "default": "",
+      "safe": "2048",
+      "options": [
+        "",
+        "512",
+        "1024",
+        "2048",
+        "4096"
+      ],
+      "note": "llama.cpp 默认 2048"
+    },
+    "UBATCH": {
+      "label": "物理批大小",
+      "group": "性能",
+      "type": "int",
+      "core": false,
+      "scope": "all",
+      "flag": "--ubatch-size",
+      "min": 32,
+      "max": 4096,
+      "default": "",
+      "safe": "512",
+      "options": [
+        "",
+        "128",
+        "256",
+        "512",
+        "1024"
+      ],
+      "note": "llama.cpp 默认 512"
+    },
+    "FLASH": {
+      "label": "Flash Attention",
+      "group": "性能",
+      "type": "enum",
+      "core": false,
+      "scope": "all",
+      "flag": "--flash-attn",
+      "default": "",
+      "safe": "auto",
+      "options": [
+        "",
+        "on",
+        "off",
+        "auto"
+      ],
+      "note": "空=llama.cpp 默认 auto"
+    },
+    "PARALLEL": {
+      "label": "并发槽位",
+      "group": "性能",
+      "type": "int",
+      "core": false,
+      "scope": "chat",
+      "flag": "--parallel",
+      "min": 1,
+      "max": 32,
+      "default": "",
+      "safe": "1",
+      "options": [
+        "",
+        "1",
+        "2",
+        "4",
+        "8"
+      ],
+      "note": "每个槽位都会分走上下文"
+    },
+    "CONTBATCH": {
+      "label": "连续批处理",
+      "group": "性能",
+      "type": "bool",
+      "core": false,
+      "scope": "chat",
+      "flag": "--cont-batching",
+      "off_flag": "--no-cont-batching",
+      "default": "",
+      "safe": "",
+      "options": [
+        "",
+        "on",
+        "off"
+      ],
+      "note": "多请求并发时提升吞吐"
+    },
+    "JINJA": {
+      "label": "Jinja 模板",
+      "group": "性能",
+      "type": "bool",
+      "core": false,
+      "scope": "chat",
+      "flag": "--jinja",
+      "off_flag": "--no-jinja",
+      "default": "on",
+      "safe": "on",
+      "options": [
+        "",
+        "on",
+        "off"
+      ],
+      "note": "工具调用依赖它，默认开启"
+    },
+    "WARMUP": {
+      "label": "启动预热",
+      "group": "性能",
+      "type": "bool",
+      "core": false,
+      "scope": "all",
+      "flag": "--warmup",
+      "off_flag": "--no-warmup",
+      "default": "",
+      "safe": "",
+      "options": [
+        "",
+        "on",
+        "off"
+      ],
+      "note": "关闭可缩短启动时间"
+    },
+    "METRICS": {
+      "label": "Prometheus 指标",
+      "group": "性能",
+      "type": "bool",
+      "core": false,
+      "scope": "all",
+      "flag": "--metrics",
+      "off_flag": "",
+      "default": "",
+      "safe": "",
+      "options": [
+        "",
+        "on",
+        "off"
+      ],
+      "note": "开启后暴露 /metrics"
+    },
+    "TEMP": {
+      "label": "温度",
+      "group": "采样",
+      "type": "float",
+      "core": false,
+      "scope": "chat",
+      "flag": "--temp",
+      "min": 0,
+      "max": 5,
+      "default": "",
+      "safe": "0.8",
+      "options": [
+        "",
+        "0",
+        "0.2",
+        "0.6",
+        "0.8",
+        "1.0",
+        "1.5"
+      ],
+      "note": "本地模型做机械活建议 0（输出逐字确定）"
+    },
+    "TOPK": {
+      "label": "top-k",
+      "group": "采样",
+      "type": "int",
+      "core": false,
+      "scope": "chat",
+      "flag": "--top-k",
+      "min": 0,
+      "max": 1000,
+      "default": "",
+      "safe": "40",
+      "options": [
+        "",
+        "0",
+        "20",
+        "40",
+        "100"
+      ],
+      "note": "0 = 关闭"
+    },
+    "TOPP": {
+      "label": "top-p",
+      "group": "采样",
+      "type": "float",
+      "core": false,
+      "scope": "chat",
+      "flag": "--top-p",
+      "min": 0,
+      "max": 1,
+      "default": "",
+      "safe": "0.95",
+      "options": [
+        "",
+        "0.5",
+        "0.8",
+        "0.9",
+        "0.95",
+        "1"
+      ],
+      "note": "1.0 = 关闭"
+    },
+    "MINP": {
+      "label": "min-p",
+      "group": "采样",
+      "type": "float",
+      "core": false,
+      "scope": "chat",
+      "flag": "--min-p",
+      "min": 0,
+      "max": 1,
+      "default": "",
+      "safe": "0.05",
+      "options": [
+        "",
+        "0",
+        "0.02",
+        "0.05",
+        "0.1"
+      ],
+      "note": "0 = 关闭"
+    },
+    "REPEAT": {
+      "label": "重复惩罚",
+      "group": "采样",
+      "type": "float",
+      "core": false,
+      "scope": "chat",
+      "flag": "--repeat-penalty",
+      "min": 0.5,
+      "max": 2,
+      "default": "",
+      "safe": "1.0",
+      "options": [
+        "",
+        "1.0",
+        "1.05",
+        "1.1",
+        "1.2"
+      ],
+      "note": "1.0 = 关闭"
+    },
+    "SEED": {
+      "label": "随机种子",
+      "group": "采样",
+      "type": "int",
+      "core": false,
+      "scope": "chat",
+      "flag": "--seed",
+      "min": -1,
+      "max": 2147483647,
+      "default": "",
+      "safe": "-1",
+      "options": [
+        "",
+        "-1",
+        "0",
+        "42",
+        "1234"
+      ],
+      "note": "-1 = 每次随机"
+    },
+    "NPREDICT": {
+      "label": "最大生成",
+      "group": "采样",
+      "type": "int",
+      "core": false,
+      "scope": "chat",
+      "flag": "--n-predict",
+      "min": -1,
+      "max": 131072,
+      "default": "",
+      "safe": "-1",
+      "options": [
+        "",
+        "-1",
+        "256",
+        "1024",
+        "4096"
+      ],
+      "note": "-1 = 不限"
+    },
+    "EXTRA": {
+      "label": "追加原始参数",
+      "group": "其他",
+      "type": "str",
+      "core": true,
+      "scope": "all",
+      "default": "",
+      "safe": "",
+      "options": [],
+      "note": "上面没覆盖到的参数直接写这里，原样拼到命令行"
+    },
+    "PRESENCE": {
+      "label": "存在惩罚",
+      "group": "采样",
+      "type": "float",
+      "core": false,
+      "scope": "chat",
+      "flag": "--presence-penalty",
+      "min": 0,
+      "max": 2,
+      "default": "",
+      "safe": "0",
+      "options": [
+        "",
+        "0",
+        "0.5",
+        "1.0",
+        "1.5",
+        "2.0"
+      ],
+      "note": "Qwen3.8 官方：非思考档建议 1.5，思考档 0.0"
+    },
+    "FREQUENCY": {
+      "label": "频率惩罚",
+      "group": "采样",
+      "type": "float",
+      "core": false,
+      "scope": "chat",
+      "flag": "--frequency-penalty",
+      "min": 0,
+      "max": 2,
+      "default": "",
+      "safe": "0",
+      "options": [
+        "",
+        "0",
+        "0.1",
+        "0.5",
+        "1.0"
+      ],
+      "note": "按出现次数惩罚；一般与存在惩罚二选一"
+    },
+    "REPEATN": {
+      "label": "重复回看窗口",
+      "group": "采样",
+      "type": "int",
+      "core": false,
+      "scope": "chat",
+      "flag": "--repeat-last-n",
+      "min": -1,
+      "max": 131072,
+      "default": "",
+      "safe": "-1",
+      "options": [
+        "",
+        "-1",
+        "64",
+        "256",
+        "1024"
+      ],
+      "note": "-1 = 整个上下文"
+    },
+    "TOPNSIGMA": {
+      "label": "top-n-sigma",
+      "group": "采样",
+      "type": "float",
+      "core": false,
+      "scope": "chat",
+      "flag": "--top-nsigma",
+      "min": -1,
+      "max": 10,
+      "default": "",
+      "safe": "-1.0",
+      "options": [
+        "",
+        "-1.0",
+        "0.5",
+        "1.0",
+        "1.5"
+      ],
+      "note": "按分布标准差裁剪，-1 = 关闭"
+    },
+    "SAMPLERS": {
+      "label": "采样器链",
+      "group": "采样",
+      "type": "str",
+      "core": false,
+      "scope": "chat",
+      "flag": "--samplers",
+      "default": "",
+      "safe": "",
+      "note": "留空用 llama.cpp 默认链"
+    },
+    "REASONING": {
+      "label": "思考模式",
+      "group": "思考控制",
+      "type": "enum",
+      "core": false,
+      "scope": "chat",
+      "flag": "--reasoning",
+      "default": "auto",
+      "safe": "off",
+      "options": [
+        "auto",
+        "off",
+        "on"
+      ],
+      "note": "实测：机械变换关思考快 20~80 倍；判断类（算术/计数）关思考必错、开思考才对"
+    },
+    "REASONINGBUDGET": {
+      "label": "思考 token 预算",
+      "group": "思考控制",
+      "type": "int",
+      "core": false,
+      "scope": "chat",
+      "flag": "--reasoning-budget",
+      "min": -1,
+      "max": 32768,
+      "default": "",
+      "safe": "0",
+      "options": [
+        "",
+        "-1",
+        "0",
+        "128",
+        "512",
+        "2048"
+      ],
+      "note": "-1 不限；0 = 立即结束思考；正数为预算"
+    },
+    "REASONINGEFFORT": {
+      "label": "思考强度",
+      "group": "思考控制",
+      "type": "enum",
+      "core": false,
+      "scope": "chat",
+      "flag": "--reasoning-effort",
+      "default": "",
+      "safe": "default",
+      "options": [
+        "",
+        "default",
+        "minimal",
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "note": "Qwen3.8 支持 reasoning_effort 分级"
+    },
+    "REASONINGFORMAT": {
+      "label": "思考输出格式",
+      "group": "思考控制",
+      "type": "enum",
+      "core": false,
+      "scope": "chat",
+      "flag": "--reasoning-format",
+      "default": "",
+      "safe": "deepseek",
+      "options": [
+        "",
+        "none",
+        "deepseek",
+        "deepseek-legacy"
+      ],
+      "note": "none=思考混在 content；deepseek=分到 reasoning_content 字段"
+    },
+    "SPECTYPE": {
+      "label": "投机解码档位",
+      "group": "投机解码",
+      "type": "enum",
+      "core": false,
+      "scope": "chat",
+      "flag": "--spec-type",
+      "default": "",
+      "safe": "",
+      "options": [
+        "",
+        "ngram-mod",
+        "ngram-simple",
+        "ngram-cache",
+        "draft-mtp",
+        "draft-simple",
+        "draft-eagle3"
+      ],
+      "note": "ngram 系零显存零依赖；draft-mtp 需模型自带 MTP 头（实测 qwen3.8-27b-mtp 可用，+6.6%）"
+    },
+    "SPECDRAFTMODEL": {
+      "label": "草稿模型路径",
+      "group": "投机解码",
+      "type": "str",
+      "core": false,
+      "scope": "chat",
+      "flag": "--spec-draft-model",
+      "default": "",
+      "safe": "",
+      "note": "仅 draft-simple / draft-eagle3 需要"
+    },
+    "SPECDRAFTNGL": {
+      "label": "草稿模型GPU层",
+      "group": "投机解码",
+      "type": "enum",
+      "core": false,
+      "scope": "chat",
+      "flag": "--spec-draft-ngl",
+      "default": "",
+      "safe": "auto",
+      "options": [
+        "",
+        "auto",
+        "all",
+        "0",
+        "999"
+      ],
+      "note": "草稿模型卸载层数"
+    },
+    "SPECNMAX": {
+      "label": "草稿 token 数",
+      "group": "投机解码",
+      "type": "int",
+      "core": false,
+      "scope": "chat",
+      "flag": "--spec-draft-n-max",
+      "min": 0,
+      "max": 32,
+      "default": "",
+      "safe": "3",
+      "options": [
+        "",
+        "1",
+        "2",
+        "3",
+        "4",
+        "6",
+        "8"
+      ],
+      "note": "官方默认 3；猜太多会因被拒而变慢"
+    },
+    "SPECNGRAMN": {
+      "label": "ngram 匹配长度",
+      "group": "投机解码",
+      "type": "int",
+      "core": false,
+      "scope": "chat",
+      "flag": "--spec-ngram-mod-n-match",
+      "min": 4,
+      "max": 128,
+      "default": "",
+      "safe": "24",
+      "options": [
+        "",
+        "12",
+        "16",
+        "24",
+        "32",
+        "48"
+      ],
+      "note": "仅 ngram 系有效"
+    },
+    "SPECPSPLIT": {
+      "label": "投机拆分概率",
+      "group": "投机解码",
+      "type": "float",
+      "core": false,
+      "scope": "chat",
+      "flag": "--spec-draft-p-split",
+      "min": 0,
+      "max": 1,
+      "default": "",
+      "safe": "0.10",
+      "options": [
+        "",
+        "0",
+        "0.05",
+        "0.1",
+        "0.2",
+        "0.5"
+      ],
+      "note": "官方默认 0.10"
+    },
+    "RERANKON": {
+      "label": "启用重排端点",
+      "group": "基础",
+      "type": "bool",
+      "core": false,
+      "scope": "rerank",
+      "flag": "--reranking",
+      "default": "on",
+      "safe": "on",
+      "options": [
+        "on",
+        "off"
+      ],
+      "note": "开启后提供 /v1/rerank 端点"
+    },
+    "POOLING": {
+      "label": "池化方式",
+      "group": "基础",
+      "type": "enum",
+      "core": false,
+      "scope": "rerank",
+      "flag": "--pooling",
+      "default": "rank",
+      "safe": "rank",
+      "options": [
+        "rank",
+        "cls",
+        "mean",
+        "last",
+        "none"
+      ],
+      "note": "bge-reranker 用 rank；普通嵌入用 mean"
+    },
+    "MMPROJ": {
+      "label": "视觉投影文件",
+      "group": "基础",
+      "type": "model",
+      "core": true,
+      "scope": "vision",
+      "flag": "--mmproj",
+      "default": "",
+      "safe": "",
+      "note": "多模态投影（mmproj）文件，视觉模型必须指定；与主模型放同一目录"
+    }
+  },
+  "units": [
+    {
+      "name": "llama-general",
+      "label": "通用对话",
+      "kind": "moe",
+      "embed": false,
+      "model": "Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf",
+      "alias": "llama-general",
+      "port": 1231,
+      "defaults": {
+        "NGL": "999",
+        "NCPUMOE": "32",
+        "CTX": "131072",
+        "CTKV": "q8_0",
+        "CTVV": "q8_0",
+        "TEMP": "0.7",
+        "TOPP": "0.8",
+        "TOPK": "20",
+        "MINP": "0",
+        "REASONING": "off",
+        "REASONINGBUDGET": "0",
+        "REPEAT": "1.0",
+        "PRESENCE": "0",
+        "NPREDICT": "16384"
+      }
+    },
+    {
+      "name": "llama-carnice",
+      "label": "Carnice 35B",
+      "kind": "moe",
+      "embed": false,
+      "model": "Carnice-Qwen3.6-MoE-35B-A3B-APEX-I-Mini.gguf",
+      "alias": "llama-carnice",
+      "port": 1232,
+      "defaults": {
+        "NGL": "999",
+        "NCPUMOE": "32",
+        "CTX": "65536",
+        "CTKV": "q8_0",
+        "CTVV": "q8_0",
+        "TEMP": "0.7",
+        "TOPP": "0.8",
+        "TOPK": "20",
+        "MINP": "0",
+        "REASONING": "off",
+        "REASONINGBUDGET": "0",
+        "REPEAT": "1.0",
+        "PRESENCE": "1.5",
+        "NPREDICT": "16384"
+      }
+    },
+    {
+      "name": "llama-heretic",
+      "label": "Heretic 27B",
+      "kind": "dense",
+      "embed": false,
+      "model": "Qwen3.8-27B-Heretic-Ara-iq4_xs-2.0.gguf",
+      "alias": "llama-heretic",
+      "port": 1233,
+      "defaults": {
+        "NGL": "48",
+        "CTX": "98304",
+        "CTKV": "q8_0",
+        "CTVV": "q8_0",
+        "TEMP": "0.7",
+        "TOPP": "0.8",
+        "TOPK": "20",
+        "MINP": "0",
+        "REASONING": "off",
+        "REASONINGBUDGET": "0",
+        "REPEAT": "1.0",
+        "PRESENCE": "1.5",
+        "NPREDICT": "16384"
+      }
+    },
+    {
+      "name": "llama-coder",
+      "label": "代码",
+      "kind": "moe",
+      "embed": false,
+      "model": "Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf",
+      "alias": "llama-coder",
+      "port": 1234,
+      "defaults": {
+        "NGL": "999",
+        "NCPUMOE": "32",
+        "CTX": "131072",
+        "CTKV": "q8_0",
+        "CTVV": "q8_0",
+        "TEMP": "0.7",
+        "TOPP": "0.8",
+        "TOPK": "20",
+        "MINP": "0",
+        "REASONING": "off",
+        "REASONINGBUDGET": "0",
+        "REPEAT": "1.05",
+        "PRESENCE": "0",
+        "NPREDICT": "65536"
+      }
+    },
+    {
+      "name": "llama-embed",
+      "label": "嵌入向量",
+      "kind": "embed",
+      "embed": true,
+      "model": "Qwen3-Embedding-0.6B-Q8_0.gguf",
+      "alias": "Qwen3-Embedding-0.6B",
+      "port": 1235,
+      "defaults": {
+        "NGL": "999",
+        "CTX": "8192"
+      }
+    },
+    {
+      "name": "llama-qwen38",
+      "label": "Qwen3.8 27B",
+      "kind": "dense",
+      "embed": false,
+      "model": "qwen3.8-27b-mtp-IQ4_XS-pure.gguf",
+      "alias": "llama-qwen38",
+      "port": 1236,
+      "defaults": {
+        "NGL": "48",
+        "CTX": "98304",
+        "CTKV": "q8_0",
+        "CTVV": "q8_0",
+        "TEMP": "0.7",
+        "TOPP": "0.8",
+        "TOPK": "20",
+        "MINP": "0",
+        "REASONING": "off",
+        "REASONINGBUDGET": "0",
+        "REPEAT": "1.0",
+        "PRESENCE": "1.5",
+        "NPREDICT": "16384"
+      }
+    },
+    {
+      "name": "llama-custom",
+      "label": "自定义",
+      "kind": "custom",
+      "embed": false,
+      "model": "",
+      "alias": "llama-custom",
+      "port": 1240,
+      "defaults": {
+        "NGL": "999",
+        "NCPUMOE": "32",
+        "CTX": "131072",
+        "TEMP": "0.7",
+        "TOPP": "0.8",
+        "TOPK": "20",
+        "MINP": "0",
+        "REASONING": "off",
+        "REASONINGBUDGET": "0",
+        "REPEAT": "1.0",
+        "PRESENCE": "1.5",
+        "NPREDICT": "16384"
+      }
+    },
+    {
+      "name": "llama-rerank",
+      "label": "重排器 bge-reranker-v2-m3",
+      "kind": "rerank",
+      "embed": false,
+      "model": "bge-reranker-v2-m3-Q8_0.gguf",
+      "alias": "llama-rerank",
+      "port": 1237,
+      "defaults": {
+        "NGL": "999",
+        "CTX": "8192",
+        "RERANKON": "on",
+        "POOLING": "rank"
+      }
+    },
+    {
+      "name": "llama-vision",
+      "label": "视觉 Qwen3-VL-8B",
+      "kind": "vision",
+      "embed": false,
+      "model": "Qwen3VL-8B-Instruct-Q4_K_M.gguf",
+      "alias": "llama-vision",
+      "port": 1238,
+      "defaults": {
+        "NGL": "999",
+        "CTX": "32768",
+        "MMPROJ": "/home/user/models/mmproj-Qwen3VL-8B-Instruct-F16.gguf"
+      }
+    }
+  ]
+}

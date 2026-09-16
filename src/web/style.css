@@ -1,0 +1,440 @@
+/* style.css */
+* { box-sizing: border-box }
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0f1115;
+  color: #e6e9ef;
+  font-family: system-ui, -apple-system, "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+h2 {
+  font-size: 15px;
+  color: #8b93a7;
+  margin-top: 18px;
+  margin-bottom: 8px;
+}
+.dim {
+  color: #8b93a7;
+  font-size: 13px;
+}
+.msg-err {
+  background-color: #ef4d5a33;
+  border-left: 2px solid #ef4d5a;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #ef4d5a;
+}
+.msg-ok {
+  background-color: #31c48d33;
+  border-left: 2px solid #31c48d;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #31c48d;
+}
+.btn {
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: 1px solid #252a34;
+  background-color: #1c2029;
+  color: #e6e9ef;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+.btn:hover {
+  background-color: #242a35;
+}
+.btn-primary {
+  background-color: #4f8cff;
+  color: white;
+  border: none;
+}
+.btn-danger {
+  background-color: #ef4d5a;
+  color: white;
+  border: none;
+}
+.btn-warn {
+  background-color: #f0a33c;
+  color: #1a1a1a;
+  border: none;
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.bar {
+  height: 10px;
+  border-radius: 999px;
+  background-color: #252a34;
+  overflow: hidden;
+  position: relative;
+}
+.bar-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #4f8cff, #31c48d);
+  transition: width 0.3s;
+}
+.bar-text {
+  font-family: monospace;
+  font-size: 13px;
+  min-width: 140px;
+  text-align: right;
+  margin-left: 8px;
+  display: inline-block;
+}
+.cores {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14px, 1fr));
+  gap: 3px;
+  margin-top: 6px;
+}
+.core-bar {
+  height: 26px;
+  border-radius: 3px;
+  background-color: #252a34;
+  display: flex;
+  align-items: flex-end;
+}
+.core-fill {
+  width: 100%;
+  height: 0;
+  border-radius: 3px;
+  background-color: #4f8cff;
+}
+.tab {
+  border: none;
+  background-color: transparent;
+  color: #8b93a7;
+  padding: 8px 14px;
+  border-bottom: 2px solid transparent;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.tab.active {
+  color: #e6e9ef;
+  border-bottom-color: #4f8cff;
+  background-color: #171a21;
+}
+#tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid #252a34;
+  margin-bottom: 16px;
+}
+.unit-card {
+  background-color: #171a21;
+  border: 1px solid #252a34;
+  border-radius: 10px;
+  padding: 14px;
+}
+.unit-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.unit-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+.unit-sub {
+  font-size: 13px;
+  color: #8b93a7;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+}
+.dot-on {
+  background-color: #31c48d;
+  box-shadow: 0 0 6px #31c48d;
+}
+.dot-off {
+  background-color: #4a5163;
+}
+.dot-busy {
+  background-color: #f0a33c;
+}
+.unit-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.param-group-title {
+  font-size: 13px;
+  color: #8b93a7;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  border-bottom: 1px dashed #252a34;
+}
+.param-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+.param-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.param-label {
+  font-size: 13px;
+  color: #8b93a7;
+}
+.param-note {
+  font-size: 12px;
+  color: #6b7385;
+}
+.param-bad {
+  font-size: 12px;
+  color: #ef4d5a;
+}
+.param-disabled {
+  opacity: 0.45;
+}
+.param-disabled select,
+.param-disabled input {
+  cursor: not-allowed;
+}
+select,
+input[type="number"],
+input[type="text"],
+textarea {
+  background-color: #0f1115;
+  border: 1px solid #252a34;
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: #e6e9ef;
+  width: 100%;
+  font-family: inherit;
+}
+.dash-card {
+  background-color: #171a21;
+  border: 1px solid #252a34;
+  border-left: 3px solid #252a34;
+  border-radius: 10px;
+  padding: 14px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 12px;
+}
+#chat-out {
+  min-height: 180px;
+  max-height: 420px;
+  overflow-y: auto;
+  background-color: #0f1115;
+  font-family: monospace;
+  font-size: 13px;
+  padding: 10px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+#login-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 17, 21, 0.94);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+#login-layer[hidden] {
+  display: none;
+}
+#login-msg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 48px;
+  text-align: center;
+  font-size: 13px;
+  color: #8b93a7;
+}
+#error-bar {
+  position: relative;
+  z-index: 200;
+  margin-bottom: 12px;
+}
+#error-bar[hidden] {
+  display: none;
+}
+#panel-dash[hidden],
+#panel-models[hidden],
+#panel-load[hidden],
+#panel-oc[hidden] {
+  display: none;
+}
+#mode-badge {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  background-color: #252a34;
+}
+.mode-local {
+  background-color: #31c48d33;
+}
+.mode-cloud {
+  background-color: #4f8cff33;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.header-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+@media (max-width: 640px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+  .param-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 关键：页签切换依赖此规则。缺失会导致所有 panel 同时可见、页签点不动 */
+.hidden { display: none !important; }
+
+/* ===== 新增：按钮变体（补齐 HTML 里用到但 CSS 缺失的类） ===== */
+.btn-secondary { background-color: #2a2f3a; color: #cdd3e0 }
+.btn-secondary:hover { background-color: #353b49 }
+.btn-success { background-color: #2f9e63; color: #fff }
+.btn-success:hover { background-color: #37b873 }
+.btn-warning { background-color: #c98a1c; color: #1a1a1a }
+.btn-warning:hover { background-color: #e0a02b }
+.btn-sm { padding: 3px 10px; font-size: 12px; border-radius: 4px }
+.msg-bad { color: #ef4d5a; font-size: 13px }
+
+/* ===== 新增：对话组件（流式输出框） ===== */
+.chat-wrap {
+  border: 1px solid #232833;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #13161d;
+  margin-bottom: 12px;
+}
+.chat-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #232833;
+  background-color: #171a22;
+}
+.chat-log {
+  height: 320px;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.chat-msg { display: flex; flex-direction: column; gap: 3px; max-width: 92% }
+.chat-who { font-size: 11px; color: #8b93a7 }
+.chat-body {
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 8px 11px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.chat-user { align-self: flex-end; align-items: flex-end }
+.chat-user .chat-body { background-color: #1f3a5f; color: #e8f0fb }
+.chat-assistant { align-self: flex-start }
+.chat-assistant .chat-body { background-color: #1b1f28; color: #dfe4ee; border: 1px solid #262c38 }
+.chat-error { border-color: #ef4d5a !important; color: #ffccd1 !important }
+.chat-cursor::after {
+  content: '▋';
+  color: #4ea1ff;
+  animation: blink 1s steps(2, start) infinite;
+}
+@keyframes blink { to { visibility: hidden } }
+.chat-input-row { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid #232833 }
+.chat-input-row textarea { flex: 1; resize: vertical }
+
+/* ===== 新增：设置页 / 仓库页的列表 ===== */
+.setting-row { display: flex; align-items: center; gap: 14px; margin-bottom: 10px }
+.setting-row label { display: flex; align-items: center; gap: 6px; min-width: 140px }
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.form-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #b9c0cf }
+.form-grid input, .form-grid select { padding: 6px 8px }
+.info-grid {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 6px 14px;
+  font-size: 13px;
+}
+.info-key { color: #8b93a7 }
+.info-val { color: #dfe4ee; word-break: break-all }
+.model-row, .hf-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #232833;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background-color: #13161d;
+}
+.model-info { min-width: 0; flex: 1 }
+.model-actions { display: flex; gap: 8px; flex-shrink: 0 }
+.hf-row .bar { margin-top: 6px }
+
+/* ===== 新增：仪表盘卡片可点击 / 缺失态 ===== */
+#dash-units .dash-card { cursor: pointer; transition: border-color .15s, transform .15s }
+#dash-units .dash-card:hover { border-color: #3d6ea8; transform: translateY(-1px) }
+.dash-missing { opacity: .55; cursor: default !important }
+.dash-missing:hover { border-color: #232833 !important; transform: none !important }
+
+/* 设置页小节标题 */
+h3 {
+  font-size: 13px;
+  color: #a8b0c4;
+  margin: 16px 0 6px;
+  font-weight: 600;
+}
+#ssh-key { width: 100%; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px }
+.info-grid code, .dim code {
+  background-color: #1b1f28;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+}
